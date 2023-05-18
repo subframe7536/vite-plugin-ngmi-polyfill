@@ -1,8 +1,8 @@
-import RollupPluginNodePolyfill from "rollup-plugin-node-polyfills";
+import RollupPluginNodePolyfill from "rollup-plugin-polyfill-node";
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 import type { NodePolyfillsOptions as EsbuildNodePolyfillsOptions } from "@esbuild-plugins/node-modules-polyfill";
-import type { NodePolyfillsOptions as RollupNodePolyfillsOptions } from "rollup-plugin-node-polyfills/dist/types/modules";
+import type { NodePolyfillsOptions as RollupNodePolyfillsOptions } from "rollup-plugin-polyfill-node";
 import type { Plugin } from "vite";
 
 export const PLUGIN_NAME = "vite-plugin-ngmi-polyfill";
