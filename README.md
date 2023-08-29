@@ -41,12 +41,12 @@ pnpm add vite vite-plugin-ngmi-polyfill
 ## Usage
 
 ```ts
-import { defineConfig } from "vite";
-import { NgmiPolyfill } from "vite-plugin-ngmi-polyfill";
+import { defineConfig } from 'vite'
+import { NgmiPolyfill } from 'vite-plugin-ngmi-polyfill'
 
 export default defineConfig({
   plugins: [NgmiPolyfill()],
-});
+})
 ```
 
 ## Examples

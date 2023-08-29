@@ -1,9 +1,11 @@
 {
-  "extends": "@vercel/style-guide/typescript.json",
   "compilerOptions": {
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true
-  },
-  "exclude": ["node_modules"],
-  "include": ["**/*.ts"]
+  }
 }

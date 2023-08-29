@@ -1,7 +1,7 @@
 {
   "name": "@subframe7536/vite-plugin-ngmi-polyfill",
   "description": "forked from vite-plugin-ngmi-polyfill with fixes",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "subframe7536",
   "repository": "https://github.com/grikomsn/vite-plugin-ngmi-polyfill.git",
   "homepage": "https://github.com/grikomsn/vite-plugin-ngmi-polyfill",
@@ -9,27 +9,36 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/index.mjs",
+        "types": "./dist/index.d.mts"
+      },
+      "require": {
+        "default": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+      }
+    }
+  },
   "files": [
-    "dist/**.js",
-    "dist/**.cjs",
-    "dist/**.mjs",
-    "dist/**.d.ts"
+    "dist"
   ],
   "sideEffects": false,
   "scripts": {
     "build": "tsup",
-    "dev": "tsup -w"
+    "dev": "tsup -w",
+    "test": "pnpm build && cd ./playground && pnpm dev"
   },
   "dependencies": {
-    "@esbuild-plugins/node-globals-polyfill": "^0",
-    "@esbuild-plugins/node-modules-polyfill": "^0",
-    "rollup-plugin-polyfill-node": "^0"
+    "esbuild-plugin-polyfill-node": "^0.3.0",
+    "rollup-plugin-polyfill-node": "^0.12.0"
   },
   "devDependencies": {
-    "@vercel/style-guide": "^4.0.2",
-    "tsup": "^6",
-    "typescript": "^5",
-    "vite": "^4"
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "@subframe7536/eslint-config": "^0.2.6"
   },
   "peerDependencies": {
     "vite": "^4"
@@ -44,5 +53,9 @@
     "vite-plugin-node-polyfill",
     "vite-plugin-polyfill"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.com/",
+    "access": "public"
+  }
 }
