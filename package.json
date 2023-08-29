@@ -1,7 +1,7 @@
 {
   "name": "@subframe7536/vite-plugin-ngmi-polyfill",
   "description": "forked from vite-plugin-ngmi-polyfill with fixes",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "subframe7536",
   "repository": "https://github.com/grikomsn/vite-plugin-ngmi-polyfill.git",
   "homepage": "https://github.com/grikomsn/vite-plugin-ngmi-polyfill",
