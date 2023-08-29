@@ -5,7 +5,8 @@ export default defineConfig({
   plugins: [
     NgmiPolyfill({
       globals: {
-        buffer: true,
+        Buffer: true,
+        process: true,
       },
       polyfills: {
         buffer: true,

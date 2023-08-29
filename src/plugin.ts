@@ -1,45 +1,55 @@
-import { polyfillNode } from 'esbuild-plugin-polyfill-node'
-import type { PolyfillNodeOptions } from 'esbuild-plugin-polyfill-node'
 import type { Plugin } from 'vite'
 import inject from '@rollup/plugin-inject'
 import { handleCircularDependancyWarning } from 'node-stdlib-browser/helpers/rollup/plugin'
+import esbuildPlugin from 'node-stdlib-browser/helpers/esbuild/plugin'
+import type { PackageNames } from 'node-stdlib-browser'
 
+type GlobalNames = 'process' | 'global' | 'Buffer'
 /**
- * node polyfill config, {@link https://github.com/cyco130/esbuild-plugin-polyfill-node source}
+ * node polyfill config
  */
-export type NgmiPolyfillConfig = {
+export type NgmiPolyfillOption = {
   /**
-   * global modules
-   * @default {
-   *   buffer: false,
-   *   global: true,
-   *   process: false
-   * },
+   * global modules, enable all if absent
    */
-  globals?: PolyfillNodeOptions['globals']
+  globals?: Partial<Record<GlobalNames, boolean>>
   /**
-   * polyfill modules
+   * polyfill modules, enable all if absent
    */
-  polyfills?: PolyfillNodeOptions['polyfills']
+  polyfills?: Partial<Record<PackageNames, boolean>>
 }
-
+async function getStdLib(polyfills: Partial<Record<PackageNames, boolean>>) {
+  const { default: stdLibBrowser } = await import('node-stdlib-browser')
+  let lib = {}
+  if (polyfills) {
+    for (const [name, enable] of Object.entries(polyfills)) {
+      const moduleName = `node:${name}`
+      if (enable && stdLibBrowser[moduleName]) {
+        lib[moduleName] = stdLibBrowser[moduleName]
+      }
+    }
+  } else {
+    lib = stdLibBrowser
+  }
+  return lib
+}
 export function generatePlugin(shim: string | Promise<string>) {
   return ({
     globals = {
-      buffer: false,
+      Buffer: true,
       global: true,
-      process: false,
+      process: true,
     },
-    polyfills = {},
-  }: NgmiPolyfillConfig = {}): Plugin => {
+    polyfills,
+  }: NgmiPolyfillOption = {}): Plugin => {
     const PLUGIN_NAME = 'vite-plugin-ngmi-polyfill'
     return {
       name: PLUGIN_NAME,
       async config() {
-        const { default: stdLibBrowser } = await import('node-stdlib-browser')
+        const lib = await getStdLib(polyfills)
         return {
           resolve: {
-            alias: stdLibBrowser,
+            alias: lib,
           },
           build: {
             rollupOptions: {
@@ -49,9 +59,9 @@ export function generatePlugin(shim: string | Promise<string>) {
               plugins: [
                 {
                   ...inject({
-                    global: [await shim, 'global'],
-                    process: [await shim, 'process'],
-                    Buffer: [await shim, 'Buffer'],
+                    ...globals.global ? { global: [await shim, 'global'] } : {},
+                    ...globals.process ? { process: [await shim, 'process'] } : {},
+                    ...globals.Buffer ? { Buffer: [await shim, 'Buffer'] } : {},
                   }),
                 },
               ],
@@ -60,11 +70,14 @@ export function generatePlugin(shim: string | Promise<string>) {
           optimizeDeps: {
             include: ['buffer', 'process'],
             esbuildOptions: {
+              inject: [await shim],
+              define: {
+                ...globals.global ? { global: 'global' } : {},
+                ...globals.process ? { process: 'process' } : {},
+                ...globals.Buffer ? { Buffer: 'Buffer' } : {},
+              },
               plugins: [
-                polyfillNode({
-                  globals,
-                  polyfills,
-                }) as any,
+                esbuildPlugin(lib),
               ],
             },
           },
